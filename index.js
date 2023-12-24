@@ -13,11 +13,10 @@ app.use("/api", api_routes);
 mongoose.connect(`${process.env.DB_URL}`)
   .then(() => {
     console.log("Connected to DB");
+    app.listen(3000,() => {
+        console.log("Up and running on port 3000");
+    })
   })
   .catch(() => {
     console.error("Error in connecting");
   })
-
-app.listen(3000,() => {
-    console.log("Up and running on port 3000");
-})
