@@ -37,7 +37,7 @@ router.post("/users/:_id/exercises",async (req, res) => {
     newExercise = await newExercise.populate('user', 'username');
 
     res.json({
-        _id: newExercise._id,
+        _id: newExercise.user._id,
         username: newExercise.user.username,
         description: newExercise.description,
         duration: newExercise.duration,
@@ -46,7 +46,7 @@ router.post("/users/:_id/exercises",async (req, res) => {
 });
 
 router.get("/users/:_id/logs",async (req, res) => {
-    
+
 });
 
 module.exports = router;
