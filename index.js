@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({"extended":true}))
 app.use("/api", api_routes);
 
+console.log(process.env.DB_URL);
 mongoose.connect(`${process.env.DB_URL}`)
   .then(() => {
     console.log("Connected to DB");
