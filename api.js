@@ -25,6 +25,8 @@ router.post("/users/:_id/exercises",async (req, res) => {
 
     if (!date)
         date = new Date().toDateString()
+    else
+        date = new Date(req.body.date).toDateString()
 
     let newExercise = await models.Exercise.create({
         user: userId,
