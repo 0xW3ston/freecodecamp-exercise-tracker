@@ -64,7 +64,7 @@ router.get("/users/:_id/logs",async (req, res) => {
             const fromDate = new Date(from);
             const toDate = new Date(to);
             // console.log(`[fromdate]: ${fromDate}, [date]: ${(new Date(val.date))}, [todate]: ${toDate}\n[Values, LS, VL, MR]: ${fromDate.valueOf()}<->${(new Date(val.date)).valueOf()}<->${toDate.valueOf()}`);
-            if ((fromDate.valueOf() <= (new Date(val.date)).valueOf()) && ((new Date(val.date)).valueOf() <= toDate.valueOf()))
+            if ((fromDate <= (new Date(val.date))) && ((new Date(val.date)) <= toDate))
             {
                 const originalDate = (new Date(val.date)).toDateString();
                 return {"description": val.description, "duration": val.duration, "date": originalDate};
