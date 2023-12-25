@@ -55,10 +55,10 @@ router.get("/users/:_id/logs",async (req, res) => {
 
 
     const username = (await models.User.findById(userId)).username;
-    const results = await models.Exercise.find({"user": userId}, {"_id": 0, "description": 1, "duration": 1, "date": 1})
-    .limit(limit);
+    const results = await models.Exercise.find({"user": userId}, {"_id": 0, "description": 1, "duration": 1, "date": 1});
+    //.limit(limit)
 
-    const formattedResults = results.map((val, i) => {
+    let formattedResults = results.map((val, i) => {
         if (from && to)
         {
             const fromDate = new Date(from);
@@ -76,15 +76,16 @@ router.get("/users/:_id/logs",async (req, res) => {
         }
         const originalDate = (new Date(val.date)).toDateString();
         return {"description": val.description, "duration": val.duration, "date": originalDate}
-    }).filter((result) => result !== null);;
+    }).filter((result) => result !== null);
 
+    formattedResults = (limit) ? formattedResults.slice(0, limit) : formattedResults;
     // console.log(formattedResults)
 
     res.json({
         _id: userId,
         username: username,
         ...((from != 0 && to != 0) ? { from: (new Date(from)).toDateString(), to: (new Date(to)).toDateString() } : {}),
-        count: results.length,
+        count: formattedResults.length,
         log: formattedResults
     })
 });
