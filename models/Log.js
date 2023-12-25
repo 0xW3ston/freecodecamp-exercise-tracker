@@ -8,8 +8,8 @@ const LogSchema = new Schema({
         description: String,
         duration: Number,
         date: {
-            type: String,
-            default: () => new Date().toDateString()
+            type: Schema.Types.Date,
+            default: () => new Date()
         }
     }]
   });

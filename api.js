@@ -24,9 +24,9 @@ router.post("/users/:_id/exercises",async (req, res) => {
     let date = req.body.date;
 
     if (!date)
-        date = new Date().toDateString()
+        date = new Date();
     else
-        date = new Date(req.body.date).toDateString()
+        date = new Date(req.body.date);
 
     let newExercise = await models.Exercise.create({
         user: userId,
@@ -43,12 +43,50 @@ router.post("/users/:_id/exercises",async (req, res) => {
         username: newExercise.user.username,
         description: newExercise.description,
         duration: newExercise.duration,
-        date: date
+        date: date.toDateString()
     });
 });
 
 router.get("/users/:_id/logs",async (req, res) => {
+    const userId = req.params._id;
+    const limit = (req.query.limit) ? req.query.limit : 0;
+    const from = (req.query.from) ? req.query.from : 0;
+    const to = (req.query.to) ? req.query.to : 0;
 
+
+    const username = (await models.User.findById(userId)).username;
+    const results = await models.Exercise.find({"user": userId}, {"_id": 0, "description": 1, "duration": 1, "date": 1})
+    .limit(limit);
+
+    const formattedResults = results.map((val, i) => {
+        if (from && to)
+        {
+            const fromDate = new Date(from);
+            const toDate = new Date(to);
+            // console.log(`[fromdate]: ${fromDate}, [date]: ${(new Date(val.date))}, [todate]: ${toDate}\n[Values, LS, VL, MR]: ${fromDate.valueOf()}<->${(new Date(val.date)).valueOf()}<->${toDate.valueOf()}`);
+            if ((fromDate.valueOf() <= (new Date(val.date)).valueOf()) && ((new Date(val.date)).valueOf() <= toDate.valueOf()))
+            {
+                const originalDate = (new Date(val.date)).toDateString();
+                return {"description": val.description, "duration": val.duration, "date": originalDate};
+            }
+            else
+            {
+                return null;
+            }
+        }
+        const originalDate = (new Date(val.date)).toDateString();
+        return {"description": val.description, "duration": val.duration, "date": originalDate}
+    }).filter((result) => result !== null);;
+
+    // console.log(formattedResults)
+
+    res.json({
+        _id: userId,
+        username: username,
+        ...((from != 0 && to != 0) ? { from: (new Date(from)).toDateString(), to: (new Date(to)).toDateString() } : {}),
+        count: results.length,
+        log: formattedResults
+    })
 });
 
 module.exports = router;
